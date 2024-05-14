@@ -1,3 +1,4 @@
+// METADATA
 $(document).ready(function () {
 var collective = "SANIL";
   var attrValue = $('input[name="package"]:checked').attr("package-name");
@@ -17,7 +18,7 @@ var collective = "SANIL";
   });
   $('#wf-form-Sponsorship').attr('action', '#');
   $('#wf-form-Sponsorship').submit(function (event) {
-  	event.preventDefault();
+    event.preventDefault();
   });
 $('#wf-form-Sponsorship').submit(async function (event) {
     event.preventDefault(); // Prevent default form submission
@@ -38,7 +39,7 @@ $('#wf-form-Sponsorship').submit(async function (event) {
           'plan-intent':attrValue,
           'sport-package':sport,
           'first-name': first,
-        	'last-name': last,
+          'last-name': last,
         },
         email: email,
         password: password
@@ -49,7 +50,7 @@ $('#wf-form-Sponsorship').submit(async function (event) {
       await memberstack.purchasePlansWithCheckout({
         priceId: selectedValue, // required
         metadataForCheckout: {
-        	SPORT: sport,
+          SPORT: sport,
           COLLECTIVE: collective
         },
         cancelUrl: domain,
