@@ -21,6 +21,7 @@ var sanil = (function($) {
     if (options.collective) {
       set_collective(options.collective);
       update_package_display();
+      // added in this
       $submitBtn.attr('data-ms-price:add', $packageRadios.filter(':checked').val());
       initialize_listeners();
     }
