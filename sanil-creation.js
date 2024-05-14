@@ -68,7 +68,7 @@ var sanil = (function($) {
             email: email,
             password: password
         });
-
+asdfasdf
         // Purchase plans with checkout
         var domain = "https://" + window.location.hostname;
         await memberstack.purchasePlansWithCheckout({
