@@ -1,0 +1,63 @@
+$(document).ready(function () {
+var collective = "SANIL";
+  var attrValue = $('input[name="package"]:checked').attr("package-name");
+  $('#package-label').text(attrValue);
+  $('#plan-intent').val(attrValue);
+  var selectedValue = $('input[name="package"]:checked').val();
+  $('#submit').attr('data-ms-price:add', selectedValue);
+  $('input[name="package"]').on('change', function () {
+    // Get the value of the checked radio button
+    selectedValue = $('input[name="package"]:checked').val();
+
+    // Set the custom attribute of the element
+    $('#submit').attr('data-ms-price:add', selectedValue);
+    attrValue = $('input[name="package"]:checked').attr("package-name");
+    $('#package-label').text(attrValue);
+    $('#plan-intent').val(attrValue);
+  });
+  $('#wf-form-Sponsorship').attr('action', '#');
+  $('#wf-form-Sponsorship').submit(function (event) {
+  	event.preventDefault();
+  });
+$('#wf-form-Sponsorship').submit(async function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    var formData = $(this).serializeArray(); // Serialize form data
+
+    try {
+      // Extract email and password from form data
+      var email = formData.find(item => item.name === 'email').value;
+      var password = formData.find(item => item.name === 'password').value;
+      var first = formData.find(item => item.name === 'first').value;
+      var last = formData.find(item => item.name === 'last').value;
+      var sport = formData.find(item => item.name === 'sport').value;
+
+      // Signup the member with extracted email and password
+      await memberstack.signupMemberEmailPassword({
+        customFields: {
+          'plan-intent':attrValue,
+          'sport-package':sport,
+          'first-name': first,
+        	'last-name': last,
+        },
+        email: email,
+        password: password
+      });
+      var domain = "https://" + window.location.hostname;
+      console.log(domain);
+      // After successful signup, redirect them to the stripe checkout
+      await memberstack.purchasePlansWithCheckout({
+        priceId: selectedValue, // required
+        metadataForCheckout: {
+        	SPORT: sport,
+          COLLECTIVE: collective
+        },
+        cancelUrl: domain,
+        successUrl: domain,
+        autoRedirect: true // Set this to true if you want to automatically redirect after successful purchase
+      });
+    } catch (err) {
+      console.log(err.message); // Display error message if signup fails
+    }
+  });
+});
