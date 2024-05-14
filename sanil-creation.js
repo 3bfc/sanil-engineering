@@ -15,13 +15,13 @@ var sanil = (function($) {
   // updates the form input that matches the MS custom field
   var $planIntent = $('#plan-intent');
 
-  var $form = $('#wf-form-Sponsorship');
 
   function init(options) {
     // Initialize your library with options
     if (options.collective) {
       set_collective(options.collective);
       update_package_display();
+      $submitBtn.attr('data-ms-price:add', $packageRadios.filter(':checked').val());
       initialize_listeners();
     }
     console.log("Initializing sanil with options:", options);
@@ -44,10 +44,10 @@ var sanil = (function($) {
 
     $form.attr('action','#');
     $form.submit(function(event){
-      event.preventDefault;
+      event.preventDefault();
     })
     $form.submit(async function(event){
-      event.preventDefault;
+      event.preventDefault();
       try {
         var formData = $(this).serializeArray();
         var email = formData.find(item => item.name === 'email').value;
@@ -56,7 +56,7 @@ var sanil = (function($) {
         var last = formData.find(item => item.name === 'last').value;
         var sport = formData.find(item => item.name === 'sport').value;
         var selectedValue = $packageRadios.filter(':checked').val();
-
+        var domain = "https://" + window.location.hostname;
         // Signup member
         await memberstack.signupMemberEmailPassword({
             customFields: {
@@ -68,9 +68,9 @@ var sanil = (function($) {
             email: email,
             password: password
         });
-asdfasdf
+
         // Purchase plans with checkout
-        var domain = "https://" + window.location.hostname;
+        
         await memberstack.purchasePlansWithCheckout({
             priceId: selectedValue,
             metadataForCheckout: {
