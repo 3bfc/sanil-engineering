@@ -49,18 +49,21 @@ var sanil_edit_sport = (function($){
     if (typeof memberstack !== 'undefined') {
       var history = await memberstack.getMemberJSON();
     } else {
-      alert("Please refresh the page");
+    	var history = undefined
     }
-    if (history != undefined) {
-      history.push(entry);
+
+    if (history.data != undefined) {
+      history.data.push(entry);
     } else {
       history = [entry];
     }
-    memberstack.updateMemberJSON({
+
+    await memberstack.updateMemberJSON({
       json: history
-    })
+    });
+    
   }
   return {
     init: init
-  };
+  }
 })(jQuery);
