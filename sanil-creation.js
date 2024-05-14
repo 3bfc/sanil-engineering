@@ -4,7 +4,9 @@
 */
 
 var sanil = (function($) {
-  var collective = ""; // Initialize collective variable
+  // Initialize collective variable
+  var collective = "";
+  
   var $packageRadios = $('input[name="package"]');
   var $form = $('#wf-form-Sponsorship');
   var $submitBtn = $('#submit');
