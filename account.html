@@ -1,39 +1,131 @@
 <script>
-  $(document).ready(function() {
-    // Disable the button initially
-    $('#account-submit').prop('disabled', true);
-    $('#password-submit').prop('disabled', true);
-    
-    $('#account-form input').change(function() {
-      if ($(this).val() !== '') {
-        $('#account-submit').prop('disabled', false);
-        $('#account-submit').removeClass('button-tertiary-gray-outline').addClass('button-primary-outline-small');
-      } else {
-        // If default option is selected, disable the button
-        $('#account-submit').prop('disabled', true);
-        $('#account-submit').removeClass('button-primary-outline-small').addClass('button-tertiary-gray-outline');
+  function createSnippet(current, msdata,jsondata,index) {
+      var snippetTemplate = $('#snippet-template');
+      var billing = new Date(msdata['payment']['nextBillingDate'] * 1000);
+      var year = billing.getFullYear();
+      var month = billing.getMonth() + 1; // Months are zero-indexed, so we add 1
+      var day = billing.getDate();
+      var date = month + '/' + day + '/' + year;
+      var created_at = new Date(current['data']['createdAt']);
+      var created_at_date = (created_at.getMonth()+1) + '/' + created_at.getDate() + '/' + created_at.getFullYear();
+      snippetTemplate.find('.mem_name').text(msdata['payment']['amount']);
+      snippetTemplate.find('.mem_start').text(created_at_date);
+      snippetTemplate.find('.mem_charge').text(date);
+      snippetTemplate.find('.mem_sport').text(current['data']['customFields']['sport-package']);
+      var href =  '/member/edit-membership' + '?id=' + msdata['id']
+      snippetTemplate.find('a.a-target').attr('href',href);
+      return snippetTemplate;
+  }
+  
+  
+  function create_crosssell_snippet() {
+    var snippetTemplate = $('#cross-template');
+    return snippetTemplate;
+  }
+  
+  async function getDataAndPopulateSnippets() {
+      try {
+          // Use Promise.all() to wait for both promises to resolve
+          const [currentMemberData, memberJsonData] = await Promise.all([
+              window.$memberstackDom.getCurrentMember(),
+              memberstack.getMemberJSON()
+          ]);
+          var snippet = null;
+          // Loop through JSON data array and populate snippets from getCurrentMember()
+          let hasActivePlan = false;
+
+          // Loop through JSON data array and check plan status
+          for (const item of currentMemberData.data.planConnections) {
+              if (item.status !== "CANCELED") {
+                  // If there's an active plan, create snippet and set flag
+                  hasActivePlan = true;
+                  const snippet = createSnippet(currentMemberData, item, memberJsonData);
+                  snippet.removeClass("hidden");
+                  $('#snippet-container').append(snippet);
+                  // Break loop since we only need one active plan
+                  break;
+              }
+          }
+
+          // If no active plan found, create cross-sell snippet
+          if (!hasActivePlan) {
+              const crossSellSnippet = create_crosssell_snippet();
+              crossSellSnippet.removeClass("hidden");
+              $('#snippet-container').append(crossSellSnippet);
+          }
+
+      } catch (error) {
+          console.error(error);
       }
-    });
-    
-    $('#new-password-input').change(function() {
-      if ($(this).val() !== '') {
-        $('#password-submit').prop('disabled', false);
-        $('#password-submit').removeClass('button-tertiary-gray-outline').addClass('button-primary-outline-small');
-      } else {
-        // If default option is selected, disable the button
-        $('#password-submit').prop('disabled', true);
-        $('#password-submit').removeClass('button-primary-outline-small').addClass('button-tertiary-gray-outline');
-      }
-    });
-    
-    $('#account-form').submit(function(event) {
-        $('#account-submit').prop('disabled', true);
-        $('#account-submit').removeClass('button-primary-outline-small').addClass('button-tertiary-gray-outline');
-    })
-    
-    $('#password-form').submit(function(event) {
-        $('#password-submit').prop('disabled', true);
-        $('#password-submit').removeClass('button-primary-outline-small').addClass('button-tertiary-gray-outline');
-    })
-  });
+  }
+
+  // Call the function to initiate the process
+  getDataAndPopulateSnippets();
 </script>
+
+<!-- 
+  card for membership
+ -->
+ <style>
+  .uui-career11_job-details-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+<div class="uui-career11_item snippet hidden" id="snippet-template">
+  <div class="uui-career11_title-wrapper">
+      <span style="flex-direction: row;display: flex;font-size: 1rem;font-weight: 500;">$<div
+              class="uui-career11_heading mem_name">Membership name</div></span>
+      <div class="uui-career11_location"></div>
+  </div>
+  <div class="text-size-medium" style="flex-direction: row;display: flex;font-weight: 500;">
+      <div class="uui-text-size-medium">Sport: <span class="mem_sport"></span></div>
+  </div>
+  <div class="uui-career11_job-details-wrapper">
+      <div class="mem_start_wrapper text-size-medium" style="flex-direction: row;display: flex; font-weight: 500;">
+        <div class="uui-career11_detail-wrapper uui-text-size-medium" style="gap:2px;">Start charge: <span class="mem_start"></span></div>
+      </div>
+      <div class="mem_charge_wrapper text-size-medium" style="flex-direction: row;display: flex; font-weight: 500;">
+          <div class="uui-career11_detail-wrapper uui-text-size-medium" style="gap:2px;">Next charge: <span class="mem_charge"></span></div>
+      </div>
+
+  </div>
+  <div class="uui-button-row">
+      <div class="uui-button-wrapper max-width-full-mobile-landscape">
+          <a href="#" class="a-target button-tertiary-gray-outline max-width-full-mobile-landscapey w-inline-block">
+              <div>Change Sport</div>
+          </a></div>
+      <div class="uui-button-wrapper max-width-full-mobile-landscape"><a href="/member/update-plan-management" class="button-tertiary-gray-outline max-width-full-mobile-landscape w-inline-block">
+              <div>Update Membership</div>
+          </a></div>
+      <div class="uui-button-wrapper max-width-full-mobile-landscape"><a href="" data-ms-action="customer-portal"
+              class="button-tertiary-gray-outline max-width-full-mobile-landscape w-inline-block">
+              <div>Change Payment</div>
+          </a>
+      </div>
+
+  </div>
+</div>
+
+<!-- 
+  card for empty membership
+ -->
+ <div class="uui-career11_item snippet hidden" id="cross-template">
+  <div class="uui-career11_title-wrapper">
+      <span style="flex-direction: row;display: flex;font-size: 1rem;font-weight: 500;"><div class="uui-career11_heading">You don't currently have a paid membership!</div></span>
+      <div class="uui-career11_location"></div>
+  </div>
+  <div class="text-size-medium" style="flex-direction: row;display: flex;font-weight: 500;">
+      <div class="uui-text-size-medium">Consider upgrading now!<span class="mem_sport"></span></div>
+  </div>
+  <div class="uui-career11_job-details-wrapper">
+      <div class="mem_charge_wrapper text-size-medium" style="flex-direction: row;display: flex; font-weight: 500;">
+          <!-- <div class="uui-career11_detail-wrapper uui-text-size-medium">Next charge: <span class="mem_charge"></span></div> -->
+      </div>
+  </div>
+  <div class="uui-button-row">
+      <div class="uui-button-wrapper max-width-full-mobile-landscape">
+        <a href="/member/update-plan-management" class="button-tertiary-gray-outline max-width-full-mobile-landscape w-inline-block"><div>Purchase Membership</div></a>
+      </div>
+  </div>
+</div>
