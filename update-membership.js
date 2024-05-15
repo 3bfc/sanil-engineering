@@ -1,38 +1,4 @@
-
 $(document).ready(function () {
-  async function addNewMembership(memberstack, memdata) {
-
-    await memberstack.updateMemberJSON({
-      json: {
-        plans: memdata
-      }
-    });
-
-  }
-  memberstack.getMemberJSON().then((memdata) => {
-    var mdata = memdata['data']['plans'];
-    var newdata = {};
-
-
-    $('#wf-form-Sponsorship').submit(function (event) {
-      event.preventDefault();
-      new_data['plan_id'] = plan_id;
-      new_data['plan_name'] = plan_name;
-      new_data['sport'] = $('#sport-package').val();
-      mdata.push(newdata);
-      // memberstack.updateMemberJSON({json:mdata});
-      addNewMembership(memberstack, mdata);
-      //   var m =     {
-      //   "id": "con_sb_clulygb230pez0sq790mh925h",
-      //   "sport": "Baseball",
-      //   "amount": 249.99,
-      //   "plan_id": "prc_ncat-249-99-monthly-3spx0a9i",
-      //   "plan_name": "Pride of A&T - $249.99 - monthly"
-      // }
-
-    });
-  })
-
   $('#submit').prop('disabled', true);
   memberstack.getCurrentMember().then((member) => {
     var active_account = true;
