@@ -85,7 +85,7 @@ var sanil = (function($) {
             autoRedirect: true
         });
     } catch (err) {
-      displayErrorMessage(err.message);
+      alert(err.message);
     }
     });
   }
