@@ -56,7 +56,7 @@ var sanil = (function($) {
           autoRedirect: true // Set this to true if you want to automatically redirect after successful purchase
         });
       } catch (err) {
-        displayErrorMessage(err.message);
+        alert(err.message);
       }
     });
 
