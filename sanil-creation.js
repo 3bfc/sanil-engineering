@@ -58,12 +58,14 @@ var sanil = (function($) {
         var first = formData.find(item => item.name === 'first').value;
         var last = formData.find(item => item.name === 'last').value;
         var sport = formData.find(item => item.name === 'sport').value;
+        var referral = formData.find(item => item.name === 'referral').value;
         var selectedValue = $packageRadios.filter(':checked').val();
         var domain = "https://" + window.location.hostname;
         // Signup member
         await memberstack.signupMemberEmailPassword({
             customFields: {
                 'plan-intent': $planIntent.val(),
+                'referral': referral,
                 'sport-package': sport,
                 'first-name': first,
                 'last-name': last,
