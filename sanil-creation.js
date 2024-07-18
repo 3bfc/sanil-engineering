@@ -58,7 +58,8 @@ var sanil = (function($) {
         var first = formData.find(item => item.name === 'first').value;
         var last = formData.find(item => item.name === 'last').value;
         var sport = formData.find(item => item.name === 'sport').value;
-        var referral = formData.find(item => item.name === 'referral').value;
+        var referralField = formData.find(item => item.name === 'referral');
+        var referral = (referralField && referralField.value) ? referralField.value : null;
         var selectedValue = $packageRadios.filter(':checked').val();
         var domain = "https://" + window.location.hostname;
         // Signup member
