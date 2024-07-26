@@ -80,6 +80,7 @@ var sanil = (function($) {
         await memberstack.purchasePlansWithCheckout({
             priceId: selectedValue,
             metadataForCheckout: {
+                REFERRAL: referral,
                 SPORT: sport,
                 COLLECTIVE: collective
             },
